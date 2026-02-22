@@ -40,7 +40,7 @@ pip install trainforge
 
 Or for development:
 ```bash
-git clone https://github.com/yourname/trainforge.git
+git clone https://github.com/abhishek-dev-code/trainforge.git
 cd trainforge
 pip install -e .
 ```
