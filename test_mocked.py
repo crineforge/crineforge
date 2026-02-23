@@ -23,7 +23,8 @@ def test_dry_run():
     trainer.load_data("sample.txt")
     trainer.auto_config()
     trainer.dry_run()
-    print("MOCKED: Crineforge dry run executed successfully!")
+    from crineforge.utils.logger import default_logger as logger
+    logger.info("MOCKED: Crineforge dry run executed successfully!")
 
 if __name__ == "__main__":
     test_dry_run()

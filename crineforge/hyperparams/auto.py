@@ -14,7 +14,8 @@ class AutoConfig:
             "batch_size": 2,
             "learning_rate": 2e-4,
             "epochs": 3,
-            "gradient_accumulation_steps": 4
+            "gradient_accumulation_steps": 4,
+            "max_seq_length": 512
         }
         
         if dataset_len > 1000:

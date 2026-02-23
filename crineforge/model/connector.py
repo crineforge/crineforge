@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
 from .gpu import GPUSensitive
 from ..utils.logger import get_logger
@@ -25,8 +25,13 @@ class ModelConnector:
         
         try:
             if strategy["precision"] == "4bit":
-                model_kwargs["load_in_4bit"] = True
-                model = AutoModelForCausalLM.from_pretrained(model_id, **model_kwargs)
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_use_double_quant=True
+                )
+                model = AutoModelForCausalLM.from_pretrained(model_id, quantization_config=bnb_config, **model_kwargs)
             elif strategy["precision"] == "float16":
                 model_kwargs["torch_dtype"] = torch.float16
                 model = AutoModelForCausalLM.from_pretrained(model_id, **model_kwargs)
@@ -43,6 +48,12 @@ class ModelConnector:
     def prepare_lora(model, r=8, alpha=16, dropout=0.05):
         """Attaches LoRA to the actual target model for training."""
         logger.info("Preparing model for LoRA fine-tuning...")
+        
+        if hasattr(model, "gradient_checkpointing_enable"):
+            model.gradient_checkpointing_enable()
+            logger.info("Gradient checkpointing enabled to save VRAM.")
+        model.config.use_cache = False
+        
         config = LoraConfig(
             r=r,
             lora_alpha=alpha,

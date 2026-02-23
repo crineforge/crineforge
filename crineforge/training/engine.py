@@ -1,4 +1,3 @@
-import os
 import torch
 from datasets import Dataset
 from trl import SFTTrainer
@@ -49,7 +48,7 @@ class Engine:
                 model=model,
                 train_dataset=dataset,
                 formatting_func=formatting_prompts_func,
-                max_seq_length=512,
+                max_seq_length=hyperparams.get("max_seq_length", 512),
                 tokenizer=tokenizer,
                 args=training_args,
             )

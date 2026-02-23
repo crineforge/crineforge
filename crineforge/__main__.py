@@ -21,20 +21,31 @@ def main():
     logger = logging.getLogger("crineforge.cli")
     
     if args.command == "train":
-        logger.info(f"Starting Crineforge with model={args.model} and data={args.data}")
-        trainer = Trainer()
-        trainer.connect_model(args.model)
-        trainer.load_data(args.data)
-        trainer.auto_config()
-        
-        if args.dry_run:
-            logger.info("Executing dry run...")
-            trainer.dry_run()
-        else:
-            logger.info("Starting training...")
-            trainer.train()
-            trainer.save(args.output)
-            logger.info(f"Training complete. Model saved to {args.output}")
+        try:
+            logger.info(f"Starting Crineforge with model={args.model} and data={args.data}")
+            trainer = Trainer()
+            trainer.connect_model(args.model)
+            trainer.load_data(args.data)
+            trainer.auto_config()
+            
+            if args.dry_run:
+                logger.info("Executing dry run...")
+                trainer.dry_run()
+            else:
+                logger.info("Starting training...")
+                trainer.train()
+                trainer.save(args.output)
+                logger.info(f"Training complete. Model saved to {args.output}")
+                
+        except ValueError as e:
+            logger.error(f"[User Error] {e}")
+            sys.exit(1)
+        except RuntimeError as e:
+            logger.error(f"[Runtime Error] {e}")
+            sys.exit(1)
+        except Exception as e:
+            logger.error(f"[Unexpected Error] {e}")
+            raise
 
 if __name__ == "__main__":
     main()

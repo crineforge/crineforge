@@ -8,27 +8,42 @@ class GPUSensitive:
     """Detects CUDA availability and provides VRAM-based precision strategies to avoid OOM."""
     
     @staticmethod
+    def log_vram_usage(step_name: str):
+        """Logs allocated and reserved VRAM safely, tracking pipeline overhead."""
+        if torch.cuda.is_available():
+            allocated = torch.cuda.memory_allocated() / (1024 ** 3)
+            reserved = torch.cuda.memory_reserved() / (1024 ** 3)
+            
+            logger.info(
+                f"[VRAM] {step_name} | "
+                f"Allocated: {allocated:.2f} GB | "
+                f"Reserved: {reserved:.2f} GB"
+            )
+        else:
+            logger.info(f"[VRAM] {step_name} | CPU mode")
+    
+    @staticmethod
     def get_strategy() -> dict:
         if not torch.cuda.is_available():
-            logger.warning("CUDA not available. Falling back to CPU precision.")
+            logger.warning("[GPU] CUDA not available. Falling back to CPU precision.")
             return {"device": "cpu", "precision": "float32"}
             
         try:
             device = torch.cuda.current_device()
             total_vram = torch.cuda.get_device_properties(device).total_memory / (1024**3) # GB
-            logger.info(f"Detected GPU: {torch.cuda.get_device_name(device)} with {total_vram:.2f} GB VRAM")
+            logger.info(f"[GPU] Detected GPU: {torch.cuda.get_device_name(device)} with {total_vram:.2f} GB VRAM")
             
             if total_vram >= 16.0:
-                logger.info("VRAM >= 16GB. Recommending fp16 precision.")
+                logger.info("[GPU] VRAM >= 16GB. Recommending fp16 precision.")
                 return {"device": "cuda", "precision": "float16"}
             elif total_vram >= 8.0:
-                logger.info("VRAM >= 8GB. Recommending 4-bit quantization.")
+                logger.info("[GPU] VRAM >= 8GB. Recommending 4-bit quantization.")
                 return {"device": "cuda", "precision": "4bit"}
             else:
-                logger.warning("VRAM < 8GB. Falling back to CPU to prevent OOM. (Training will be slow)")
+                logger.warning("[GPU] VRAM < 8GB. Falling back to CPU to prevent OOM. (Training will be slow)")
                 return {"device": "cpu", "precision": "float32"}
         except Exception as e:
-            logger.error(f"Error reading GPU properties: {str(e)}")
+            logger.error(f"[GPU] Error reading GPU properties: {str(e)}")
             return {"device": "cpu", "precision": "float32"}
             
     @staticmethod
@@ -38,4 +53,4 @@ class GPUSensitive:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
             torch.cuda.ipc_collect()
-            logger.debug("CUDA memory cache cleared safely.")
+            logger.debug("[GPU] CUDA memory cache cleared safely.")

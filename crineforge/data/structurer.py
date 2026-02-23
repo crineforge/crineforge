@@ -22,9 +22,12 @@ class Structurer:
         self.model = None
         self.max_new_tokens = 2048
         self.temperature = 0.2
-        self._load_model()
+        # Removed premature _load_model() execution to enforce explicit laziness
         
     def _load_model(self):
+        if self.model is not None and self.tokenizer is not None:
+            return
+            
         logger.info(f"Lazy loading structurer model: {self.model_id} (this may take time on first run)")
         
         cache_dir = os.path.expanduser("~/.crineforge/models")
@@ -54,6 +57,9 @@ class Structurer:
 
     def generate_pairs(self, text_chunk: str) -> str:
         """Converts raw text chunk into JSON format mapping {instruction: response} pairs."""
+        if not self.model or not self.tokenizer:
+            self._load_model()
+            
         if not self.model or not self.tokenizer:
             raise RuntimeError("Structurer model not loaded.")
             
@@ -100,14 +106,15 @@ def get_structurer() -> Structurer:
     return _structurer_instance
 
 def free_structurer():
-    """Frees the structurer model from memory when training phase begins."""
+    """Frees the structurer model from memory entirely and cleans the CUDA cache."""
     global _structurer_instance
     if _structurer_instance is not None:
-        logger.info("Freeing Structurer memory footprint...")
-        del _structurer_instance.model
-        del _structurer_instance.tokenizer
+        logger.info("[GPU] Freeing Structurer memory footprint...")
+        del _structurer_instance
         _structurer_instance = None
         gc.collect()
+        
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-        logger.info("Structurer cache cleared.")
+            
+        logger.info("[GPU] Structurer cache definitively cleared.")

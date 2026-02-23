@@ -20,4 +20,5 @@ if __name__ == "__main__":
     # Test the pipeline without executing the training loops
     trainer.dry_run()
     
-    print("Crineforge dry run executed successfully!")
+    from crineforge.utils.logger import default_logger as logger
+    logger.info("Crineforge dry run executed successfully!")
