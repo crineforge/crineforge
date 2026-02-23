@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 
 class Trainer:
     """
-    TrainForge main facade.
+    Crineforge main facade.
     Provides a simple, elegant API for end-users to fine-tune models from raw data.
     """
     
@@ -30,7 +30,7 @@ class Trainer:
         self._tokenizer = None
         
         set_seed(seed)
-        logger.info("TrainForge Trainer initialized.")
+        logger.info("Crineforge Trainer initialized.")
 
     def connect_model(self, model_id: str):
         """Connects a HuggingFace Hub ID or local path as the target for training."""

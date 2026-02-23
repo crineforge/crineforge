@@ -1,7 +1,7 @@
 import logging
 
 def get_logger(name: str) -> logging.Logger:
-    """Returns a pre-configured logger for TrainForge."""
+    """Returns a pre-configured logger for Crineforge."""
     logger = logging.getLogger(name)
     if not logger.handlers:
         handler = logging.StreamHandler()

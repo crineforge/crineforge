@@ -4,7 +4,7 @@ import logging
 from .core import Trainer
 
 def main():
-    parser = argparse.ArgumentParser(description="TrainForge - Define and run AI training jobs.")
+    parser = argparse.ArgumentParser(description="Crineforge - Define and run AI training jobs.")
     
     subparsers = parser.add_subparsers(dest="command", required=True)
     
@@ -18,10 +18,10 @@ def main():
     args = parser.parse_args()
     
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    logger = logging.getLogger("trainforge.cli")
+    logger = logging.getLogger("crineforge.cli")
     
     if args.command == "train":
-        logger.info(f"Starting TrainForge with model={args.model} and data={args.data}")
+        logger.info(f"Starting Crineforge with model={args.model} and data={args.data}")
         trainer = Trainer()
         trainer.connect_model(args.model)
         trainer.load_data(args.data)

@@ -1,4 +1,4 @@
-# 🚀 TrainForge
+# 🚀 Crineforge
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -6,7 +6,7 @@
 
 Forge intelligent models from raw data.
 
-TrainForge is a modular, offline-first LLM fine-tuning toolkit designed to automate:
+Crineforge is a modular, offline-first LLM fine-tuning toolkit designed to automate:
 - Data structuring
 - Validation
 - Auto hyperparameter selection
@@ -14,7 +14,7 @@ TrainForge is a modular, offline-first LLM fine-tuning toolkit designed to autom
 - GPU-safe execution
 - Model saving
 
-TrainForge works with any HuggingFace model or local model path.
+Crineforge works with any HuggingFace model or local model path.
 
 ---
 
@@ -35,13 +35,13 @@ TrainForge works with any HuggingFace model or local model path.
 ## 📦 Installation
 
 ```bash
-pip install trainforge
+pip install crineforge
 ```
 
 Or for development:
 ```bash
-git clone https://github.com/abhishek-dev-code/trainforge.git
-cd trainforge
+git clone https://github.com/abhishek-dev-code/crineforge.git
+cd crineforge
 pip install -e .
 ```
 
@@ -50,7 +50,7 @@ pip install -e .
 ## 🧠 Quick Start
 
 ```python
-from trainforge import Trainer
+from crineforge import Trainer
 
 trainer = Trainer()
 
@@ -93,7 +93,7 @@ That's it.
 
 ## 🖥 GPU Handling
 
-TrainForge automatically:
+Crineforge automatically:
 - Detects CUDA
 - Detects VRAM
 - Loads FP16 (>=16GB)
@@ -117,7 +117,7 @@ TrainForge automatically:
 ## 🧪 Example CLI Usage
 
 ```bash
-trainforge train --model meta-llama/Meta-Llama-3-8B --data data.pdf
+crineforge train --model meta-llama/Meta-Llama-3-8B --data data.pdf
 ```
 
 ---
@@ -128,15 +128,15 @@ trainforge train --model meta-llama/Meta-Llama-3-8B --data data.pdf
 - Multi-GPU support
 - Dataset visualization
 - Distributed training
-- **Note:** TrainForge may introduce advanced commercial/SaaS tier or subscription-based features in the future, while keeping the core toolkit open-source under MIT.
+- **Note:** Crineforge may introduce advanced commercial/SaaS tier or subscription-based features in the future, while keeping the core toolkit open-source under MIT.
 
 ---
 
 ## ⚖️ Model Usage Disclaimer
 
-**TrainForge does not bundle or redistribute third-party model weights.**
+**Crineforge does not bundle or redistribute third-party model weights.**
 
-Models (such as the internal DeepSeek structurer or any base model you choose to fine-tune) are downloaded dynamically from their official sources and are strictly subject to their respective original licenses. TrainForge code is MIT licensed, but external models are not owned or licensed by TrainForge. Users are responsible for complying with the licenses of the models they use.
+Models (such as the internal DeepSeek structurer or any base model you choose to fine-tune) are downloaded dynamically from their official sources and are strictly subject to their respective original licenses. Crineforge code is MIT licensed, but external models are not owned or licensed by Crineforge. Users are responsible for complying with the licenses of the models they use.
 
 Please review the [LEGAL_NOTICE.md](LEGAL_NOTICE.md) for full compliance details.
 
@@ -144,5 +144,5 @@ Please review the [LEGAL_NOTICE.md](LEGAL_NOTICE.md) for full compliance details
 
 ## 📄 License
 
-TrainForge is licensed under the [MIT License](LICENSE). 
+Crineforge is licensed under the [MIT License](LICENSE). 
 Copyright (c) 2025 Abhishek.

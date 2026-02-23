@@ -33,7 +33,7 @@ class Engine:
                 return output_texts
                 
             training_args = TrainingArguments(
-                output_dir="./trainforge_tmp_outputs",
+                output_dir="./crineforge_tmp_outputs",
                 per_device_train_batch_size=hyperparams.get("batch_size", 1),
                 gradient_accumulation_steps=hyperparams.get("gradient_accumulation_steps", 4),
                 learning_rate=hyperparams.get("learning_rate", 2e-4),

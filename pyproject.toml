@@ -2,18 +2,18 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[project]
-name = "trainforge"
-version = "0.1.0"
-description = "A production-ready, modular AI fine-tuning toolkit."
-authors = [{name = "Abhishek", email = "abhishek@example.com"}] # Update email if needed
-readme = "README.md"
-license = {text = "MIT"}
-requires-python = ">=3.9"
 
-[project.urls]
-Homepage = "https://github.com/abhishek-dev-code/trainforge"
-Repository = "https://github.com/abhishek-dev-code/trainforge"
+[project]
+name = "Crineforge"
+version = "0.1.0"
+description = "Forge intelligent models from raw data."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+authors = [
+  { name = "Abhishek", email = "abhi955513@gmail.com" }
+]
 
 dependencies = [
     "torch>=2.0.0",
@@ -26,5 +26,10 @@ dependencies = [
     "pandas>=2.0.0"
 ]
 
+
+[project.urls]
+Homepage = "https://github.com/abhishek-dev-code/crineforge"
+
+
 [project.scripts]
-trainforge = "trainforge.__main__:main"
+crineforge = "crineforge.__main__:main"

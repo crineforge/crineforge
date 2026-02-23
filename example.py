@@ -4,7 +4,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from trainforge import Trainer
+from crineforge import Trainer
 
 if __name__ == "__main__":
     trainer = Trainer()
@@ -20,4 +20,4 @@ if __name__ == "__main__":
     # Test the pipeline without executing the training loops
     trainer.dry_run()
     
-    print("TrainForge dry run executed successfully!")
+    print("Crineforge dry run executed successfully!")

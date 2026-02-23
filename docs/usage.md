@@ -1,4 +1,4 @@
-# TrainForge User Guide
+# Crineforge User Guide
 
 ## 1️⃣ Basic Usage
 
@@ -53,7 +53,7 @@ trainer.save("output_model")
 
 ## Strict Mode
 
-TrainForge ensures:
+Crineforge ensures:
 - No summarization
 - No semantic compression
 - >90% token retention
@@ -72,7 +72,7 @@ If GPU available:
 ## Offline Mode
 
 After first DeepSeek download:
-TrainForge runs fully offline.
+Crineforge runs fully offline.
 
 ---
 

@@ -1,4 +1,4 @@
-# TrainForge Architecture
+# Crineforge Architecture
 
 ## Core Modules
 
@@ -38,7 +38,7 @@ We exclusively utilize local instruction models for structuring (default: `deeps
 
 The internal LLM is:
 - Loaded locally (quantized if appropriate).
-- Cached in `~/.trainforge/models`.
+- Cached in `~/.crineforge/models`.
 - Used only for structuring offline pairs.
 - Not exposed to the user directly to prevent logic bloat.
 - Cleanly garbage collected post-generation using Singleton reference deletion.

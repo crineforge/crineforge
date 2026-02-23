@@ -27,7 +27,7 @@ class Structurer:
     def _load_model(self):
         logger.info(f"Lazy loading structurer model: {self.model_id} (this may take time on first run)")
         
-        cache_dir = os.path.expanduser("~/.trainforge/models")
+        cache_dir = os.path.expanduser("~/.crineforge/models")
         os.makedirs(cache_dir, exist_ok=True)
         
         try:

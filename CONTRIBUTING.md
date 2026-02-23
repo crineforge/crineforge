@@ -1,13 +1,13 @@
-# Contributing to TrainForge
+# Contributing to Crineforge
 
-We welcome contributions to TrainForge!
+We welcome contributions to Crineforge!
 
 ## Licensing of Contributions
-TrainForge is licensed under the [MIT License](LICENSE). 
+Crineforge is licensed under the [MIT License](LICENSE). 
 
-By contributing to TrainForge, you agree that your contributions will be licensed under its MIT License. 
+By contributing to Crineforge, you agree that your contributions will be licensed under its MIT License. 
 
-You explicitly grant the repository owner (Abhishek) and the community the right to use, modify, and distribute your submitted code under these terms. This broad license grant helps to ensure that TrainForge can be maintained sustainably and potentially support expanded open-core or commercial features in the future, while remaining fundamentally open-source.
+You explicitly grant the repository owner (Abhishek) and the community the right to use, modify, and distribute your submitted code under these terms. This broad license grant helps to ensure that Crineforge can be maintained sustainably and potentially support expanded open-core or commercial features in the future, while remaining fundamentally open-source.
 
 ## No CLA Required
 Currently, there is no requirement to sign a Contributor License Agreement (CLA) to contribute. Your pull request approval acts as your consent to license your contribution under the MIT License.

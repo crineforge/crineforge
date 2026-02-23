@@ -26,9 +26,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# TrainForge specific caches
-~/.trainforge/
-trainforge_tmp_outputs/
+# Crineforge specific caches
+~/.crineforge/
+crineforge_tmp_outputs/
 
 # Unit test / coverage reports
 htmlcov/

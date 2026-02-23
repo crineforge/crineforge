@@ -15,7 +15,7 @@ sys.modules['datasets'] = MagicMock()
 import logging
 logging.basicConfig(level=logging.INFO)
 
-from trainforge import Trainer
+from crineforge import Trainer
 
 def test_dry_run():
     trainer = Trainer(seed=42)
@@ -23,7 +23,7 @@ def test_dry_run():
     trainer.load_data("sample.txt")
     trainer.auto_config()
     trainer.dry_run()
-    print("MOCKED: TrainForge dry run executed successfully!")
+    print("MOCKED: Crineforge dry run executed successfully!")
 
 if __name__ == "__main__":
     test_dry_run()
