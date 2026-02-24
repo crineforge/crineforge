@@ -1,6 +1,10 @@
 import os
 import torch
 import time
+try:
+    from tqdm import tqdm
+except ImportError:
+    tqdm = lambda x, **kwargs: x
 from .utils.logger import get_logger
 from .utils.seed import set_seed
 from .data.extractor import DataExtractor
@@ -22,7 +26,8 @@ class Trainer:
     Provides a simple, elegant API for end-users to fine-tune models from raw data.
     """
     
-    def __init__(self, seed: int = 42, debug_mode: bool = False):
+    def __init__(self, seed: int = 42, debug_mode: bool = False, structurer_model: str = "Qwen/Qwen2.5-1.5B-Instruct"):
+        self.structurer_model = structurer_model
         self.model_id = None
         self.data_path = None
         self.enrichment_enabled = False
@@ -87,9 +92,10 @@ class Trainer:
         GPUSensitive.log_vram_usage("Before Structuring")
         
         try:
-            structurer = get_structurer()
+            structurer = get_structurer(self.structurer_model)
             structured_pairs = []
-            for chunk in self._chunks:
+            logger.info("[Structurer] Formatting chunks...")
+            for chunk in tqdm(self._chunks, desc="Structuring chunks"):
                 json_str = structurer.generate_pairs(chunk)
                 parsed_data = Validator.parse_valid_json(json_str)
                 structured_pairs.extend(parsed_data)

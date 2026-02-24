@@ -11,16 +11,22 @@ class ModelConnector:
     
     @staticmethod
     def load(model_id: str):
+        import os
         strategy = GPUSensitive.get_strategy()
         logger.info(f"Loading target model '{model_id}' with strategy: {strategy}")
         
-        tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+        hf_token = os.environ.get("HF_TOKEN")
+        if hf_token:
+            logger.info("[HF] Authenticated model access enabled")
+        
+        tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True, token=hf_token)
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
             
         model_kwargs = {
             "device_map": "auto" if strategy["device"] == "cuda" else "cpu",
-            "trust_remote_code": True
+            "trust_remote_code": True,
+            "token": hf_token
         }
         
         try:
@@ -41,7 +47,10 @@ class ModelConnector:
             logger.info("Target model loaded successfully.")
             return model, tokenizer
         except Exception as e:
-            logger.error(f"Failed to load target model: {str(e)}")
+            if "401" in str(e) or "unauthorized" in str(e).lower():
+                logger.error(f"[HF] Unauthorized to access '{model_id}'. Ensure HF_TOKEN is correctly set in environment if this is a gated model, and you have accepted the model license.")
+            else:
+                logger.error(f"[ModelConnector] Failed to load target model: {str(e)}")
             raise e
             
     @staticmethod

@@ -10,7 +10,9 @@ sys.modules['accelerate'] = MagicMock()
 sys.modules['bitsandbytes'] = MagicMock()
 sys.modules['pandas'] = MagicMock()
 sys.modules['fitz'] = MagicMock() # PyMuPDF
-sys.modules['datasets'] = MagicMock() 
+sys.modules['datasets'] = MagicMock()
+sys.modules['numpy'] = MagicMock()
+sys.modules['tqdm'] = MagicMock()
 
 import logging
 logging.basicConfig(level=logging.INFO)

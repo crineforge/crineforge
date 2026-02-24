@@ -26,8 +26,15 @@ class Engine:
             
             def formatting_prompts_func(example):
                 output_texts = []
-                for i in range(len(example['instruction'])):
-                    text = f"Instruction: {example['instruction'][i]}\nResponse: {example['response'][i]}"
+                instructions = example.get('instruction', [])
+                responses = example.get('response', [])
+                
+                if isinstance(instructions, str):
+                    instructions = [instructions]
+                    responses = [responses]
+                    
+                for i in range(len(instructions)):
+                    text = f"Instruction: {instructions[i]}\nResponse: {responses[i]}"
                     output_texts.append(text)
                 return output_texts
                 
@@ -48,8 +55,8 @@ class Engine:
                 model=model,
                 train_dataset=dataset,
                 formatting_func=formatting_prompts_func,
+                processing_class=tokenizer,
                 max_seq_length=hyperparams.get("max_seq_length", 512),
-                tokenizer=tokenizer,
                 args=training_args,
             )
             
