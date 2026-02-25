@@ -48,8 +48,8 @@ class Structurer:
                 token=hf_token
             )
             logger.info("[Structurer] Model loaded successfully in 4-bit precision.")
-        except Exception as e:
-            logger.error(f"[Structurer] Failed to load model: {str(e)}")
+        except torch.cuda.OutOfMemoryError as e:
+            logger.error(f"[Structurer] CUDA OOM Error: {str(e)}")
             logger.warning("[Structurer] Falling back to CPU / float32. This will be very slow or OOM.")
             try:
                 self.model = AutoModelForCausalLM.from_pretrained(
