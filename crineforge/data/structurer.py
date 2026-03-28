@@ -111,20 +111,33 @@ class Structurer:
         if not self.model or not self.tokenizer:
             raise RuntimeError("Structurer model not loaded.")
             
-        base_prompt = (
-            "You are a strict data formatter. Convert the following text into a JSON array of {instruction, response} pairs. "
+        system_prompt = (
+            "You are a strict data formatter. Convert the user's text into a JSON array of {instruction, response} pairs. "
             "DO NOT summarize. Retain all technical terms. ONLY output valid JSON. "
-            f"\n\nText:\n{text_chunk}\n\nJSON:\n"
+            "Ensure the output starts with [ and ends with ]. DO NOT add any conversational text."
         )
         
         r_text = ""
         for attempt in range(2):
-            prompt = base_prompt if attempt == 0 else base_prompt + "\n\nError: Previous output was not valid JSON. Ensure you ONLY output a valid JSON array starting with [ and ending with ]."
+            if attempt == 0:
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": text_chunk}
+                ]
+            else:
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": text_chunk},
+                    {"role": "assistant", "content": r_text},
+                    {"role": "user", "content": "Error: Your previous output was not valid JSON. Ensure you ONLY output a valid JSON array starting with [ and ending with ]."}
+                ]
+                
+            prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
             inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
             
             outputs = self.model.generate(
                 **inputs, 
-                max_new_tokens=self.max_new_tokens,
+                max_new_tokens=int(self.max_new_tokens * 1.5), # Allow larger outputs
                 temperature=self.temperature if attempt == 0 else 0.01,
                 do_sample=True,
                 pad_token_id=self.tokenizer.eos_token_id
@@ -148,16 +161,18 @@ class Structurer:
                 json.loads(r_text)
                 break
             except json.JSONDecodeError as e:
-                logger.warning(f"[Structurer] Attempt {attempt+1} failed JSON validation.")
+                logger.warning(f"[Structurer] Attempt {attempt+1} failed JSON validation. Error: {str(e)}")
                 if attempt == 1:
-                    raise ValueError(f"Structurer failed to produce valid JSON after retries. Error: {str(e)}\nOutput was: {r_text}")
+                    logger.error(f"[Structurer] Chunk failed completely after retries. Discarding chunk to prevent crash.")
+                    return "[]"
         
         # 2. Prevent silent data corruption (Validate output length >= 80% of input length)
         is_valid = validate_token_length(self.tokenizer, text_chunk, "\n".join(r_text.splitlines()), threshold=0.8)
         if not is_valid:
-            logger.warning("[Structurer] Output length < 80% of input length. Potential data corruption or summarization detected.")
+            logger.warning("[Structurer] Data loss detected during structuring (Length mismatch). Discarding chunk.")
+            return "[]"
             
-        return r_text
+        return "\n".join(r_text.splitlines())
 
 def get_structurer(model_id: str = "Qwen/Qwen2.5-1.5B-Instruct") -> Structurer:
     """Returns the globally cached instance of the Structurer, instantiating it lazily if needed."""
