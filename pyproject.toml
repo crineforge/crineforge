@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crineforge"
-version = "0.2.0"
+version = "0.2.1"
 description = "Forge intelligent models from raw data."
 readme = "README.md"
 requires-python = ">=3.10"

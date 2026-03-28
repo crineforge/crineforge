@@ -54,8 +54,36 @@ class Structurer:
                 token=hf_token
             )
             logger.info("[Structurer] Model loaded successfully in 4-bit precision.")
+        except (ImportError, ModuleNotFoundError, RuntimeError, AttributeError) as e:
+            logger.warning(f"[Structurer] BitsAndBytes/Triton initialization failed ({type(e).__name__}): {str(e)}")
+            logger.info("[Structurer] Cascading Fallback -> Attempting native torch.float16 on GPU.")
+            try:
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_id, 
+                    cache_dir=cache_dir,
+                    device_map="auto",
+                    torch_dtype=torch.float16,
+                    token=hf_token
+                )
+                logger.info("[Structurer] Model loaded successfully via float16 fallback.")
+            except torch.cuda.OutOfMemoryError as oom:
+                logger.error(f"[Structurer] CUDA OOM Error during float16 fallback: {str(oom)}")
+                logger.warning("[Structurer] Last Resort Fallback -> Attempting CPU float32 (Very Slow or OOM).")
+                try:
+                    self.model = AutoModelForCausalLM.from_pretrained(
+                        self.model_id, 
+                        cache_dir=cache_dir,
+                        device_map="cpu",
+                        torch_dtype=torch.float32,
+                        token=hf_token
+                    )
+                    logger.info("[Structurer] Model loaded successfully via CPU ultimate fallback.")
+                except Exception as e2:
+                    self._handle_fallback_error(e2)
+            except Exception as e2:
+                self._handle_fallback_error(e2)
         except torch.cuda.OutOfMemoryError as e:
-            logger.error(f"[Structurer] CUDA OOM Error: {str(e)}")
+            logger.error(f"[Structurer] CUDA OOM Error on 4-bit load: {str(e)}")
             logger.warning("[Structurer] Falling back to CPU / float32. This will be very slow or OOM.")
             try:
                 self.model = AutoModelForCausalLM.from_pretrained(
@@ -66,11 +94,14 @@ class Structurer:
                     token=hf_token
                 )
             except Exception as e2:
-                if "401" in str(e2) or "unauthorized" in str(e2).lower():
-                    logger.error(f"[HF] Unauthorized to access '{self.model_id}'. Ensure HF_TOKEN is correctly set in environment if this is a gated model, and you have accepted the model license.")
-                else:
-                    logger.error(f"[Structurer] Fallback loading failed: {str(e2)}. Structuring will be unavailable.")
-                raise e2
+                self._handle_fallback_error(e2)
+
+    def _handle_fallback_error(self, e2):
+        if "401" in str(e2) or "unauthorized" in str(e2).lower():
+            logger.error(f"[HF] Unauthorized to access '{self.model_id}'. Ensure HF_TOKEN is correctly set in environment if this is a gated model, and you have accepted the model license.")
+        else:
+            logger.error(f"[Structurer] Fallback loading failed completely: {str(e2)}.")
+        raise e2
 
     def generate_pairs(self, text_chunk: str) -> str:
         """Converts raw text chunk into JSON format mapping {instruction: response} pairs."""
