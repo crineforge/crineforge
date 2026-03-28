@@ -1,2 +1,0 @@
-This is a small test file. We will use this to verify if the dataset extractor and chunker are working.
-It's just some dummy data. This should be read and chunked.
