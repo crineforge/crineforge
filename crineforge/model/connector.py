@@ -66,7 +66,7 @@ class ModelConnector:
         config = LoraConfig(
             r=r,
             lora_alpha=alpha,
-            target_modules=["q_proj", "v_proj"], # Safe default for most LLMs
+            target_modules="all-linear", # Auto-detect all linear layers (perfect for Qwen, Gemma, etc.)
             lora_dropout=dropout,
             bias="none",
             task_type="CAUSAL_LM"

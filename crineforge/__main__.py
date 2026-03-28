@@ -9,7 +9,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
     
     # Train command
-    train_parser = subparparsers.add_parser("train", help="Train a model using local data")
+    train_parser = subparsers.add_parser("train", help="Train a model using local data")
     train_parser.add_argument("--model", type=str, required=True, help="HF model ID or local path")
     train_parser.add_argument("--data", type=str, required=True, help="Path to the dataset (PDF, CSV, TXT, JSON, MD)")
     train_parser.add_argument("--output", type=str, default="output_model", help="Output directory")

@@ -1,7 +1,7 @@
 import torch
 from datasets import Dataset
 from trl import SFTTrainer
-from transformers import TrainingArguments, DataCollatorForLanguageModeling
+from transformers import TrainingArguments
 from ..model.gpu import GPUSensitive
 from ..utils.logger import get_logger
 
@@ -13,7 +13,22 @@ class Engine:
     @staticmethod
     def construct_dataset(pairs: list[dict], tokenizer) -> Dataset:
         logger.info("Constructing HF Dataset from pairs...")
-        dataset = Dataset.from_list(pairs)
+        
+        # Pre-format texts for SFTTrainer
+        formatted_pairs = []
+        for p in pairs:
+            # handle cases where instruction/response might be lists
+            instructions = p.get('instruction', '')
+            responses = p.get('response', '')
+            
+            if isinstance(instructions, str):
+                instructions = [instructions]
+                responses = [responses]
+            
+            for inst, resp in zip(instructions, responses):
+                formatted_pairs.append({'text': f"Instruction: {inst}\nResponse: {resp}"})
+                
+        dataset = Dataset.from_list(formatted_pairs)
         return dataset
 
     @staticmethod
@@ -23,20 +38,6 @@ class Engine:
         
         try:
             dataset = Engine.construct_dataset(pairs, tokenizer)
-            
-            def formatting_prompts_func(example):
-                output_texts = []
-                instructions = example.get('instruction', [])
-                responses = example.get('response', [])
-                
-                if isinstance(instructions, str):
-                    instructions = [instructions]
-                    responses = [responses]
-                    
-                for i in range(len(instructions)):
-                    text = f"Instruction: {instructions[i]}\nResponse: {responses[i]}"
-                    output_texts.append(text)
-                return output_texts
                 
             training_args = TrainingArguments(
                 output_dir="./crineforge_tmp_outputs",
@@ -48,14 +49,14 @@ class Engine:
                 optim="paged_adamw_8bit" if torch.cuda.is_available() else "adamw_torch",
                 save_strategy="no",
                 fp16=True if GPUSensitive.get_strategy()["precision"] == "float16" else False,
+                bf16=True if GPUSensitive.get_strategy()["precision"] == "bf16" else False,
                 report_to="none" # Disable external logging for privacy
             )
             
             trainer = SFTTrainer(
                 model=model,
                 train_dataset=dataset,
-                formatting_func=formatting_prompts_func,
-                processing_class=tokenizer,
+                dataset_text_field="text",
                 max_seq_length=hyperparams.get("max_seq_length", 512),
                 args=training_args,
             )

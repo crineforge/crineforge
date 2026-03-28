@@ -34,8 +34,13 @@ class GPUSensitive:
             logger.info(f"[GPU] Detected GPU: {torch.cuda.get_device_name(device)} with {total_vram:.2f} GB VRAM")
             
             if total_vram >= 16.0:
-                logger.info("[GPU] VRAM >= 16GB. Recommending fp16 precision.")
-                return {"device": "cuda", "precision": "float16"}
+                is_bf16 = torch.cuda.is_bf16_supported()
+                if is_bf16:
+                    logger.info("[GPU] VRAM >= 16GB with BF16 support. Recommending bf16 precision.")
+                    return {"device": "cuda", "precision": "bf16"}
+                else:
+                    logger.info("[GPU] VRAM >= 16GB. Recommending fp16 precision.")
+                    return {"device": "cuda", "precision": "float16"}
             elif total_vram >= 8.0:
                 logger.info("[GPU] VRAM >= 8GB. Recommending 4-bit quantization.")
                 return {"device": "cuda", "precision": "4bit"}

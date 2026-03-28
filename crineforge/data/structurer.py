@@ -2,7 +2,7 @@ import os
 import torch
 import gc
 import json
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from ..utils.diffcheck import validate_token_length
 from ..utils.logger import get_logger
 
@@ -40,11 +40,17 @@ class Structurer:
         
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_id, cache_dir=cache_dir, token=hf_token)
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True
+            )
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_id, 
                 cache_dir=cache_dir,
                 device_map="auto",
-                load_in_4bit=True,
+                quantization_config=bnb_config,
                 token=hf_token
             )
             logger.info("[Structurer] Model loaded successfully in 4-bit precision.")
