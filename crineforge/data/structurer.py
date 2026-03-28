@@ -133,6 +133,16 @@ class Structurer:
             response = self.tokenizer.decode(outputs[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True)
             r_text = response.strip()
             
+            import re
+            match = re.search(r'```(?:json)?\s*(.*?)\s*```', r_text, re.DOTALL)
+            if match:
+                r_text = match.group(1).strip()
+            else:
+                start_idx = r_text.find('[')
+                end_idx = r_text.rfind(']')
+                if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                    r_text = r_text[start_idx:end_idx+1]
+            
             # 1. Enforce strict JSON validation
             try:
                 json.loads(r_text)
