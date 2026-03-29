@@ -1,6 +1,7 @@
 import os
 import torch
 import time
+import json
 try:
     from tqdm import tqdm
 except ImportError:
@@ -94,11 +95,40 @@ class Trainer:
         try:
             structurer = get_structurer(self.structurer_model)
             structured_pairs = []
-            logger.info("[Structurer] Formatting chunks...")
-            for chunk in tqdm(self._chunks, desc="Structuring chunks"):
-                json_str = structurer.generate_pairs(chunk)
-                parsed_data = Validator.parse_valid_json(json_str)
-                structured_pairs.extend(parsed_data)
+            checkpoint_file = f"{target_path}.checkpoint.jsonl"
+            start_idx = 0
+            
+            if os.path.exists(checkpoint_file):
+                logger.info(f"[Structurer] Found checkpoint: {checkpoint_file}. Resuming...")
+                try:
+                    with open(checkpoint_file, 'r', encoding='utf-8') as f:
+                        for line in f:
+                            if line.strip():
+                                parsed_data = json.loads(line.strip())
+                                structured_pairs.extend(parsed_data)
+                                start_idx += 1
+                except Exception as e:
+                    logger.warning(f"[Structurer] Corrupted checkpoint. Starting fresh. Error: {str(e)}")
+                    start_idx = 0
+                    structured_pairs = []
+                    open(checkpoint_file, 'w').close()
+                    
+            logger.info(f"[Structurer] Formatting chunks ({start_idx}/{len(self._chunks)} already done)...")
+            with open(checkpoint_file, 'a', encoding='utf-8') as f_ckpt:
+                for i in tqdm(range(start_idx, len(self._chunks)), desc="Structuring chunks"):
+                    chunk = self._chunks[i]
+                    json_str = structurer.generate_pairs(chunk)
+                    parsed_data = Validator.parse_valid_json(json_str)
+                    structured_pairs.extend(parsed_data)
+                    
+                    f_ckpt.write(json.dumps(parsed_data) + '\n')
+                    f_ckpt.flush()
+            
+            if os.path.exists(checkpoint_file):
+                try:
+                    os.remove(checkpoint_file)
+                except Exception:
+                    pass
             
             Validator.validate_dataset_size(structured_pairs, debug_mode=getattr(self, 'debug_mode', False))
             

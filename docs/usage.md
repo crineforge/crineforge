@@ -1,88 +1,89 @@
-# Crineforge User Guide
+# 📖 Crineforge User Guide & Operations
 
-## 1️⃣ Basic Usage
+Welcome to the definitive operating manual for **Crineforge**, the execution engine bridging unstructured data to high-capacity LoRA integrations offline.
 
-Trainer class handles everything automatically.
+## 1. Quick Launch Operations
 
-### Step 1: Connect model
-Supports:
-- HuggingFace model ID
-- Local model path
+Our `Trainer` engine handles complex state and orchestration natively. A highly scaled deployment can be executed fully locally.
 
-### Step 2: Load data
-Supported formats:
-- PDF
-- TXT
-- CSV
-- JSON
-- Markdown
-
-Data is structured internally using a strict, non-summarizing AI process.
-
-### Step 3: Optional Enrichment
-Enable internet enrichment:
+### Context Initialization
 ```python
-trainer.enable_enrichment(True)
+from crineforge import Trainer
+
+# Optional Configuration: Designate custom Community Architectures
+# 'deepseek-ai/deepseek-llm-7b-chat' represents our high-scale, >24GB VRAM structural target.
+trainer = Trainer(structurer_model="Qwen/Qwen2.5-1.5B-Instruct") 
 ```
-(Default is False)
 
-### Step 4: Auto Configuration
+### Extractor Engine Routing
+Direct your unstructured formats natively:
+- `.pdf` (Internal visually-bounded traversal)
+- `.txt` / `.md`
+- `.csv` / `.json`
+
 ```python
+trainer.load_data("system_logs.pdf")
+```
+_All extraction pipelines pass through highly bounded internal algorithms that protect data boundaries and enforce factual fidelity rules, preventing LLM summary hallucination loops._
+
+---
+
+## 2. Adaptive Hardware Balancing
+
+Instead of manually calibrating gradient thresholds, delegate resource negotiation to Crineforge:
+
+```python
+# Crineforge inspects document token arrays against available VRAM nodes.
 trainer.auto_config()
 ```
-Automatically selects:
-- Learning rate
-- Batch size
-- Epochs
 
-Based on:
-- Dataset size
-- GPU memory
-
-### Step 5: Training
-```python
-trainer.train()
-```
-
-### Step 6: Save
-```python
-trainer.save("output_model")
-```
-
----
-
-## Strict Mode
-
-Crineforge ensures:
-- No summarization
-- No semantic compression
-- >90% token retention
-
----
-
-## GPU Strategy
-
-If GPU available:
-- >=16GB → FP16
-- >=8GB → 4bit
-- else → CPU fallback
-
----
-
-## Offline Mode
-
-After first DeepSeek download:
-Crineforge runs fully offline.
-
----
-
-## Advanced Configuration
-
-Manual hyperparameters:
+### Manual Engine Bypass
+For users requiring explicit training constraints:
 ```python
 trainer.manual_config(**{
     "learning_rate": 2e-4,
     "epochs": 3,
-    "batch_size": 4
+    "batch_size": 4, 
+    "gradient_accumulation_steps": 2
 })
+```
+
+---
+
+## 3. Offline Execution Protocols
+
+In domains requiring massive factual privacy, Crineforge defaults strictly to **Air-Gapped Operational Targets**.
+1. **Model Persistence**: `Qwen` and `DeepSeek` proxies are pulled once, verified, and mapped to internal cache memory paths.
+2. **True Null Exfiltration**: Following validation against the local cache, extraction parsing execution triggers completely locally. Absolutely zero context arrays are sent to hosted endpoints.
+
+### Pre-Flight Verification
+Execute offline validation rules natively without activating tuning arrays:
+```python
+trainer.dry_run() 
+```
+
+---
+
+## 4. Advanced System Modules & Enrichment
+
+Crineforge includes heuristic validations capable of dynamic scaling. 
+
+```python
+# Engages advanced routing hooks required for RAG validation sweeps.
+trainer.enable_enrichment(True)
+```
+> [!NOTE]
+> Enrichment Hooks and heuristic loops serve as the foundational bedrock for our forthcoming **Pro Validation Engines**, targeting massive external data reconciliations.
+
+---
+
+## 5. Artifact Commitment
+
+```python
+trainer.train() # Invokes chunking buffers, offline formatting, tensor mapping, and active tuning.
+```
+
+```python
+# Extract the production-ready LoRA Adapter block
+trainer.save("deploy_lora_production_v1")
 ```

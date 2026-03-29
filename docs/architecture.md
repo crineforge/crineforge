@@ -1,44 +1,55 @@
-# Crineforge Architecture
+# ⚙️ Crineforge Technical Blueprint
 
-## Core Modules
-
-### `core.py`
-- Public API wrapper (`Trainer` class)
-- Pipeline orchestration
-- Dry-run validation limits
-
-### `data/`
-- **extractor**: Extract logic parsing formatting + 10MB bounds guard.
-- **chunker**: Size limits data partitions safe for memory buffering.
-- **structurer (DeepSeek internal)**: Uses local 7B Instruct variants via Singleton Lazy Loading memory cache hooks.
-- **validator**: Verifies token retention >= 90% and ensures dataset bounds >= 20 parameters.
-- **enrichment**: Stand-in mock hooks for future internet-bound RAG verification processes.
-
-### `model/`
-- **gpu**: GPU detection parameters mapping system hardware to VRAM usage maps.
-- **connector**: HuggingFace loading bridges + LoRA adapters.
-
-### `training/`
-- **engine**: SFTTrainer runtime wrapper avoiding any remote triggers.
-- **saver**: Output writing hooks.
-
-### `hyperparams/`
-- **auto**: Rules engine dynamically adjusting `batch_size`, `gradient_accumulation_steps`, and `epochs` relative to parameters size.
-
-### `utils/`
-- **logger**: Application wide std logs.
-- **seed**: Seed management for RNG replication loops.
-- **diffcheck**: Threshold calculation for generation limits.
+This document illustrates the internal architecture routing mapping the **Crineforge** environment. Built firmly to prioritize factual validation pipelines across air-gapped runtimes, Crineforge abstracts data lifecycle modules.
 
 ---
 
-## Internal Structuring Model
+## 🏗️ Crineforge Core Flow
 
-We exclusively utilize local instruction models for structuring (default: `deepseek-ai/deepseek-llm-7b-chat`).
+```mermaid
+graph TD
+    A[Unstructured Context File] --> B(Extractor Component)
+    B -->|Bounded Tensors| C(Token Width Negotiator)
+    C -->|VRAM Buffers| D{Offline Structuring Protocol}
+    D -->|Instruction Formats via Qwen/DeepSeek| E[Validation Gateway]
+    E -->|Filtered High-Fidelity Data| F[Resource Orchestrator & LoRA Context]
+    F -->|Optimized Precision Arrays| G((Fine-Tuning Executor))
+```
 
-The internal LLM is:
-- Loaded locally (quantized if appropriate).
-- Cached in `~/.crineforge/models`.
-- Used only for structuring offline pairs.
-- Not exposed to the user directly to prevent logic bloat.
-- Cleanly garbage collected post-generation using Singleton reference deletion.
+---
+
+## 1. Internal Processing Abstractions
+
+### Context Extractor
+Our internal extraction engine traverses complex layouts seamlessly. While the Community Edition provides raw text integration and bounded image traversal natively, strict structural algorithms ensure memory isn't leaked into uncontrolled buffers prior to validation.
+
+### Token Width Negotiator
+Responsibility falls strictly to chunk limits relative to target capacity buffers, injecting logical token overlaps safely to guard against semantic starvation or mid-sequence slicing.
+
+### Offline Structuring Protocol *(The Intelligence Framework)*
+- Leveraging Hugging Face capabilities natively, Crineforge mounts open-source intelligence models natively (`deepseek-llm-7b-chat` & `Qwen2.5-1.5B-Instruct`).
+- Triggered exclusively offline. The framework loads target matrices directly into your local RAM/VRAM pools sequentially, processes chunks iteratively, and purges references proactively, utilizing robust garbage collection algorithms.
+- **Why internal models?** Deploying models locally as structured tutors avoids API timeouts, zero-trust enterprise boundaries, and subscription fees for data curation.
+
+### Validation Gateway
+The core mechanism protecting the base model's loss trajectory from noisy formatting outputs.
+- Parses generated outputs heuristically.
+- Executes safe-recovery drop-logic on malformed arrays cleanly preventing crashes.
+- Future **Pro & Enterprise validation meshes** integrate complex multi-agent swarms explicitly here to ensure 99.9% semantic fidelity bounds.
+
+---
+
+## 2. Resource Negotiation
+
+### Auto-Profile Mapping
+To prevent exhaustion loops during model loading, an automatic orchestration hook analyzes:
+1. Base parameters sizes.
+2. Graphic device capability (CUDA limits).
+3. Modulates dynamic parameters including Batch constraints intuitively. 
+
+### Distributed Connector 
+- Orchestrates `bitsandbytes` memory integrations automatically enforcing reliable 4-bit targets on low-end arrays.
+- Implements active Low-Rank Adapters globally ensuring gradients are managed independently from core weights. 
+
+## 3. Commercial Extensions
+The Community architecture detailed in this blueprint handles stable execution parameters. Further deep-dive integrations—involving heavy distributed RAG meshes, custom enterprise structurers, and swarm verifications—operate externally to the Community pipelines, ensuring optimal performance gradients exclusively.

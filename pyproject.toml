@@ -5,22 +5,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crineforge"
-version = "0.2.3"
+version = "0.2.7"
 description = "Forge intelligent models from raw data."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 
 authors = [
-  { name = "Abhishek", email = "abhi955513@gmail.com" }
+  { name = "The Crineforge Developers" }
 ]
 
 dependencies = [
     "torch>=2.0.0",
     "transformers>=4.45.0,<5.0.0",
-    "peft>=0.7.0,<0.15.0",
+    "peft>=0.7.0,<0.18.0",
     "accelerate>=0.27.0",
-    "bitsandbytes>=0.42.0,<0.45.0",
+    "bitsandbytes==0.43.1",
+    "triton==3.6.0; sys_platform != 'win32'",
     "trl>=0.11.0,<0.16.0",
     "PyMuPDF>=1.23.0",
     "pandas>=2.0.0",
@@ -29,7 +30,7 @@ dependencies = [
 
 
 [project.urls]
-Homepage = "https://github.com/abhishek-dev-code/crineforge"
+Homepage = "https://github.com/crineforge/crineforge"
 
 
 [project.scripts]
